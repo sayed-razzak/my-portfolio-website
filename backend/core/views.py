@@ -138,10 +138,4 @@ def resume_download(request):
         filename=filename
     )
 
-from django.contrib.auth.models import User
 
-def create_admin(request):
-    if not User.objects.filter(username='admin').exists():
-        User.objects.create_superuser('admin', 'admin@gmail.com', 'admin123')
-        return JsonResponse({"message": "Admin created"})
-    return JsonResponse({"message": "Admin already exists"})

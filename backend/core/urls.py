@@ -6,6 +6,6 @@ urlpatterns = [
     path('contact/', contact_submit),
     path('resume/', resume_meta),
     path('resume/download/', resume_download),
-    path('create-admin/', create_admin),
+    
 ]
-from .views import create_admin
+
