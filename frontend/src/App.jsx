@@ -15,6 +15,7 @@ import {
   FaDatabase,
   FaGitAlt
 } from 'react-icons/fa';
+import profilePic from './assets/profile.jpg';
 
 const API_BASE = 'https://portfolio-backend-3uzd.onrender.com/api';
 
@@ -169,7 +170,9 @@ function App() {
           </div>
 
           <div className="hero-card">
-            <div className="profile-badge">CS</div>
+            <div className="profile-badge">
+  <img src={profilePic} alt="Profile" />
+</div>
             <h3>Final Year Student</h3>
             <p>React • Django • Python • JavaScript</p>
 
