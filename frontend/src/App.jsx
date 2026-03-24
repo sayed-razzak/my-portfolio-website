@@ -22,7 +22,6 @@ function App() {
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
   const [portfolio, setPortfolio] = useState(null);
   const [resumeAvailable, setResumeAvailable] = useState(false);
-  const [resumeInfo, setResumeInfo] = useState(null);
   const [status, setStatus] = useState('');
   const [form, setForm] = useState({
     name: '',
@@ -38,17 +37,15 @@ function App() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [portfolioRes, resumeRes] = await Promise.all([
-          fetch(`${API_BASE}/portfolio/`),
-          fetch(`${API_BASE}/resume/`)
-        ]);
+        const portfolioRes = await fetch(`${API_BASE}/portfolio/`);
+        const resumeRes = await fetch(`${API_BASE}/resume/`);
 
         const portfolioData = await portfolioRes.json();
         const resumeData = await resumeRes.json();
 
         setPortfolio(portfolioData);
         setResumeAvailable(!!resumeData.available);
-        setResumeInfo(resumeData);
+        
 
         document.title = `${portfolioData.name} | Full Stack Developer`;
       } catch (error) {
@@ -106,7 +103,7 @@ function App() {
   }
 
   const socials = portfolio.socials || {};
-  const featuredProjects = portfolio.featured_projects || [];
+ 
   const allProjects = portfolio.projects || [];
   const techStack = portfolio.tech_stack || [];
 
@@ -191,10 +188,7 @@ function App() {
               </div>
             </div>
 
-            <div className="resume-counter">
-              <strong>{resumeInfo?.download_count ?? 0}</strong>
-              <span>Resume Downloads</span>
-            </div>
+
           </div>
         </section>
 
@@ -222,24 +216,7 @@ function App() {
           </div>
         </section>
 
-        <section className="glass-section">
-          <h2>Featured Projects</h2>
-          <div className="projects-grid featured-grid">
-            {featuredProjects.map((project, index) => (
-              <article className="project-card featured-card" key={index}>
-                <div className="project-top">
-                  <span className="project-index">FEATURED {index + 1}</span>
-                  <h3>{project.title}</h3>
-                </div>
-                <p>{project.description}</p>
-                <div className="project-tech">{project.tech}</div>
-                <a href={project.link} target="_blank" rel="noreferrer">
-                  View Project →
-                </a>
-              </article>
-            ))}
-          </div>
-        </section>
+
 
         <section className="glass-section">
           <h2>Projects</h2>
@@ -290,15 +267,7 @@ function App() {
               </button>
             </form>
 
-            <div className="contact-note">
-              <h3>Let’s build something great</h3>
-              <p>
-                This portfolio is built to look modern, professional, and interview-ready.
-                Resume updates happen from Django Admin, and contact messages are stored in the backend.
-              </p>
-              <p className="status">{status}</p>
             </div>
-          </div>
         </section>
       </main>
     </div>
