@@ -69,35 +69,36 @@ function App() {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setStatus('Sending...');
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-      const response = await fetch(`${API_BASE}/contact/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(form)
-      });
+  try {
+    const response = await fetch(`${API_BASE}/contact/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: form.name,
+        email: form.email,
+        message: form.message
+      })
+    });
 
-      const result = await response.json();
+    const data = await response.json();
 
-      if (response.ok) {
-        setStatus('Message sent successfully!');
-        setForm({
-          name: '',
-          email: '',
-          message: ''
-        });
-      } else {
-        setStatus(result.error || 'Something went wrong');
-      }
-    } catch (error) {
-      setStatus('Network error');
+    if (response.ok) {
+      alert("Message sent successfully ✅");
+      setForm({ name: "", email: "", message: "" });
+    } else {
+      alert(data.error || "Something went wrong ❌");
     }
-  };
+
+  } catch (error) {
+    console.error(error);
+    alert("Network error ❌");
+  }
+};
 
   if (!portfolio) {
     return <div className="loading">Loading portfolio...</div>;
@@ -196,7 +197,7 @@ function App() {
         </section>
 
         <section className="glass-section">
-          <h2>Tech Stack</h2>
+          <h2>Skills</h2>
           <div className="tech-grid">
             {techStack.map((group, index) => (
               <div className="tech-card" key={index}>
