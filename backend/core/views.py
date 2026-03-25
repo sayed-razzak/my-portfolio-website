@@ -79,25 +79,26 @@ def portfolio_data(request):
     return JsonResponse(data)
 
 
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
+from .models import ContactMessage
+
+
 @csrf_exempt
 def contact_submit(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Only POST allowed"}, status=405)
+
     try:
-        if request.method != "POST":
-            return JsonResponse({"error": "Only POST allowed"}, status=405)
+        data = json.loads(request.body.decode("utf-8"))
 
-        # DEBUG PRINT
-        print("BODY:", request.body)
-
-        data = json.loads(request.body or "{}")
-
-        name = data.get("name", "")
-        email = data.get("email", "")
-        message = data.get("message", "")
-
-        print(name, email, message)  # 👈 debug
+        name = data.get("name", "").strip()
+        email = data.get("email", "").strip()
+        message = data.get("message", "").strip()
 
         if not name or not email or not message:
-            return JsonResponse({"error": "Missing fields"}, status=400)
+            return JsonResponse({"error": "All fields are required"}, status=400)
 
         ContactMessage.objects.create(
             name=name,
@@ -105,10 +106,9 @@ def contact_submit(request):
             message=message
         )
 
-        return JsonResponse({"message": "Saved successfully"}, status=201)
+        return JsonResponse({"message": "Message saved successfully"}, status=201)
 
     except Exception as e:
-        print("ERROR:", str(e))  # 🔥 VERY IMPORTANT
         return JsonResponse({"error": str(e)}, status=500)
     
 def resume_meta(request):
