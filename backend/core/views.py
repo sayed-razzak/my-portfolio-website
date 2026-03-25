@@ -81,17 +81,23 @@ def portfolio_data(request):
 
 @csrf_exempt
 def contact_submit(request):
-    if request.method != "POST":
-        return JsonResponse({"error": "Only POST method allowed"}, status=405)
-
     try:
-        body = json.loads(request.body.decode("utf-8"))
-        name = body.get("name", "").strip()
-        email = body.get("email", "").strip()
-        message = body.get("message", "").strip()
+        if request.method != "POST":
+            return JsonResponse({"error": "Only POST allowed"}, status=405)
+
+        # DEBUG PRINT
+        print("BODY:", request.body)
+
+        data = json.loads(request.body or "{}")
+
+        name = data.get("name", "")
+        email = data.get("email", "")
+        message = data.get("message", "")
+
+        print(name, email, message)  # 👈 debug
 
         if not name or not email or not message:
-            return JsonResponse({"error": "All fields are required"}, status=400)
+            return JsonResponse({"error": "Missing fields"}, status=400)
 
         ContactMessage.objects.create(
             name=name,
@@ -99,12 +105,12 @@ def contact_submit(request):
             message=message
         )
 
-        return JsonResponse({"message": "Message sent successfully"}, status=201)
+        return JsonResponse({"message": "Saved successfully"}, status=201)
 
-    except Exception:
-        return JsonResponse({"error": "Something went wrong"}, status=500)
-
-
+    except Exception as e:
+        print("ERROR:", str(e))  # 🔥 VERY IMPORTANT
+        return JsonResponse({"error": str(e)}, status=500)
+    
 def resume_meta(request):
     resume = Resume.objects.order_by('-uploaded_at').first()
 
