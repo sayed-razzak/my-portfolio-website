@@ -78,17 +78,15 @@ def portfolio_data(request):
 
     return JsonResponse(data)
 
-
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
 import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from .models import ContactMessage
-
 
 @csrf_exempt
 def contact_submit(request):
     if request.method != "POST":
-        return JsonResponse({"error": "Only POST allowed"}, status=405)
+        return JsonResponse({"error": "Only POST method allowed"}, status=405)
 
     try:
         data = json.loads(request.body.decode("utf-8"))
@@ -106,10 +104,14 @@ def contact_submit(request):
             message=message
         )
 
-        return JsonResponse({"message": "Message saved successfully"}, status=201)
+        return JsonResponse({"message": "Message sent successfully"}, status=201)
+
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
     
 def resume_meta(request):
     resume = Resume.objects.order_by('-uploaded_at').first()
