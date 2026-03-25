@@ -119,23 +119,26 @@ def resume_meta(request):
     })
 
 
+from django.http import FileResponse
+import os
+
 def resume_download(request):
     resume = Resume.objects.order_by('-uploaded_at').first()
 
-    if not resume or not resume.file:
-        raise Http404("Resume not found")
-
-    # increase download count
-    resume.download_count += 1
-    resume.save(update_fields=['download_count'])
+    if not resume:
+        return JsonResponse({"error": "No resume found"}, status=404)
 
     file_path = resume.file.path
-    filename = os.path.basename(file_path)
 
-    return FileResponse(
-        open(file_path, 'rb'),
-        as_attachment=True,
-        filename=filename
-    )
+    if not os.path.exists(file_path):
+        return JsonResponse({"error": "File not found"}, status=404)
 
+    response = FileResponse(open(file_path, 'rb'))
+    response['Content-Disposition'] = f'attachment; filename="{os.path.basename(file_path)}"'
+    response['Cache-Control'] = 'no-store'   # 🔥 IMPORTANT LINE
 
+    return response
+
+@csrf_exempt
+def contact_submit(request):
+    print("REQUEST HIT")   # 👈 ADD THIS

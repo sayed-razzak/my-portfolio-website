@@ -150,7 +150,7 @@ function App() {
               </a>
 
               {resumeAvailable && (
-                <a href={`${API_BASE}/resume/download/`} className="btn secondary">
+                <a href={`${API_BASE}/resume/download/?t=${Date.now()}`} className="btn secondary" >
                   <FaDownload /> Download Resume
                 </a>
               )}
